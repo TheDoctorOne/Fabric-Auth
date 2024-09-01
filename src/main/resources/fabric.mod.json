@@ -1,15 +1,15 @@
 {
 	"schemaVersion": 1,
-	"id": "modid",
+	"id": "fabric-auth",
 	"version": "${version}",
-	"name": "Example mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "FabricAuth",
+	"description": "Authing done easy.",
 	"authors": [
-		"Me!"
+		"DoctorOne"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/TheDoctorOne/fabric-auth"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/modid/icon.png",
@@ -17,9 +17,6 @@
 	"entrypoints": {
 		"main": [
 			"com.example.ExampleMod"
-		],
-		"client": [
-			"com.example.ExampleModClient"
 		]
 	},
 	"mixins": [
@@ -31,7 +28,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.10",
-		"minecraft": "~1.20.6",
+		"minecraft": "~1.20.1",
 		"java": ">=21",
 		"fabric-api": "*"
 	},
