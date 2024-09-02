@@ -1,8 +1,9 @@
 {
   "required": true,
   "package": "net.mahmutkocas.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ClientConnectionMixin",
     "PlayerInventoryMixin",
     "PlayerScreenMixin",
     "ServerPlayerEntityMixin",
