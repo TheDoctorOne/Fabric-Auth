@@ -1,4 +1,4 @@
-package com.example;
+package net.mahmutkocas;
 
 public interface IAuthHandler {
 

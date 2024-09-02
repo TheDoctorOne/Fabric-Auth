@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "fabric-auth",
+	"id": "fabricauth",
 	"version": "${version}",
 	"name": "FabricAuth",
 	"description": "Authing done easy.",
@@ -9,20 +9,20 @@
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/TheDoctorOne/fabric-auth"
+		"sources": "https://github.com/TheDoctorOne/fabricauth"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/modid/icon.png",
+	"icon": "assets/fabricauth/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.ExampleMod"
+			"net.mahmutkocas.FabricAuth"
 		]
 	},
 	"mixins": [
-		"modid.mixins.json",
+		"fabricauth.mixins.json",
 		{
-			"config": "modid.client.mixins.json",
+			"config": "fabricauth.client.mixins.json",
 			"environment": "client"
 		}
 	],

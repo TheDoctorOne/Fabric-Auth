@@ -1,4 +1,4 @@
-package com.example;
+package net.mahmutkocas;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -21,7 +21,7 @@ public class JsonAuthHandler implements IAuthHandler {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("JsonAuthHandler");
 
-    private Map<String, String> userPassMap = new ConcurrentHashMap<>();
+    private final Map<String, String> userPassMap = new ConcurrentHashMap<>();
 
     public JsonAuthHandler() {
         reloadUsers();
