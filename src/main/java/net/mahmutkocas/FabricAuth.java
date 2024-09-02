@@ -109,7 +109,8 @@ public class FabricAuth implements ModInitializer {
                                 return 1;
                             }
 
-                            String user = context.getSource().getPlayer().getUuidAsString();
+                            var player = context.getSource().getPlayer();
+                            String user = player.getUuidAsString();
                             String pass = StringArgumentType.getString(context, "password");
 
                             if (!authHandler.userExists(user)) {
@@ -123,9 +124,11 @@ public class FabricAuth implements ModInitializer {
                                 return 1;
                             }
 
-                            context.getSource().getPlayer().getAbilities().invulnerable = false;
-                            context.getSource().getPlayer().sendAbilitiesUpdate();
-                            PlayerStateHandler.INSTANCE.remove(context.getSource().getPlayer());
+                            PlayerStateHandler.INSTANCE.remove(player);
+                            player.getAbilities().invulnerable = false;
+                            player.sendAbilitiesUpdate();
+                            player.onSpawn(); // Do chores.
+
                             context.getSource().sendFeedback(() -> Text.literal("Giriş başarılı!"), false);
                             return 1;
                         }))));
