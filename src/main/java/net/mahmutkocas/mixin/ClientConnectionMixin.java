@@ -18,21 +18,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientConnection.class)
 public class ClientConnectionMixin {
 
-    @Shadow @Final private static Logger LOGGER;
+    @Shadow
+    @Final
+    private static Logger LOGGER;
 
     @Inject(at = @At("HEAD"), method = "handlePacket", cancellable = true)
     private static <T extends PacketListener> void handlePacket(Packet<T> packet, PacketListener listener, CallbackInfo ci) {
-        if(!(listener instanceof ServerPlayNetworkHandler)) {
+        if (!(listener instanceof ServerPlayNetworkHandler)) {
             return;
         }
         ServerPlayNetworkHandler handler = (ServerPlayNetworkHandler) listener;
 
-        LOGGER.info("Packet class" + packet.getClass().getName());
-        if(packet instanceof CustomPayloadC2SPacket) {
-            checkLock(handler.getPlayer().getUuidAsString(), ci);
-            if(ci.isCancelled()) {
-                CustomPayloadC2SPacket pack = (CustomPayloadC2SPacket) packet;
-                LOGGER.info("Denied packet: " + pack.getChannel() + " for Player: " + handler.getPlayer().getUuidAsString());
+        if (packet instanceof CustomPayloadC2SPacket pack) {
+            if (!"minecraft".equals(pack.getChannel().getNamespace())) {
+                checkLock(handler.getPlayer().getUuidAsString(), ci);
+                if (ci.isCancelled()) {
+                    LOGGER.info("Denied packet: " + pack.getChannel() + " for Player: " + handler.getPlayer().getUuidAsString());
+                }
+            } else {
+                LOGGER.debug("Packet: " + pack.getChannel() + " for Player: " + handler.getPlayer().getUuidAsString());
             }
         }
     }
