@@ -1,9 +1,23 @@
-# Fabric Example Mod
+# Fabric Auth
 
-## Setup
+Supports register/login.
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+*   /register <pass> <pass>
+*   /login <pass>
 
-## License
+Before login or register this mod blocks following:
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+*   Movement
+*   Any interaction
+*   Inventory slots
+*   Blocks FTB Chunk Claiming
+*   Makes player invincible (until login)
+*   Filters almost all the network custom packages
+
+Some additional information~
+
+Creates \`users.json\` inside the server folder.
+
+Password are encrypted, and users are saved with their UUIDs.
+
+[CurseForge](https://legacy.curseforge.com/minecraft/mc-mods/fabric-auth)
