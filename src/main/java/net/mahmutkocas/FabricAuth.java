@@ -132,6 +132,41 @@ public class FabricAuth implements ModInitializer {
                             context.getSource().sendFeedback(() -> Text.literal("Giriş başarılı!"), false);
                             return 1;
                         }))));
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(
+                literal("changepw")
+                        .then(argument("oldPassword", StringArgumentType.word())
+                                .then(argument("newPassword", StringArgumentType.word())
+                                .then(argument("newPasswordRepeat", StringArgumentType.word())
+                                        .executes(context -> {
+                                            if(Objects.isNull(context.getSource().getPlayer())) {
+                                                context.getSource().sendFeedback(() -> Text.literal("Bu komutu sadece oyuncular kullanabilir."), false);
+                                                return 1;
+                                            }
+                                            if(checkPlayerLock(context.getSource().getPlayer()) == ActionResult.FAIL) {
+                                                context.getSource().sendFeedback(() -> Text.literal("Giriş yapınız."), false);
+                                                return 1;
+                                            }
+                                            String oldPassword = StringArgumentType.getString(context, "oldPassword");
+                                            String newPassword = StringArgumentType.getString(context, "newPassword");
+                                            String newPasswordRepeat = StringArgumentType.getString(context, "newPasswordRepeat");
+                                            if (!Objects.equals(newPassword, newPasswordRepeat) || StringUtil.isNullOrEmpty(newPassword) || StringUtil.isNullOrEmpty(newPasswordRepeat)) {
+                                                context.getSource().sendFeedback(() -> Text.literal("Şifreler uyuşmuyor."), false);
+                                                return 1;
+                                            }
+
+                                            String user = context.getSource().getPlayer().getUuidAsString();
+
+
+                                            boolean isSuccess = authHandler.changePassword(user, oldPassword, newPassword);
+                                            if (!isSuccess) {
+                                                context.getSource().sendFeedback(() -> Text.literal("Şifre değişimi sırasında hata oluştu. Eski şifreni doğru girdin mi?"), false);
+                                                return 1;
+                                            }
+                                            context.getSource().sendFeedback(() -> Text.literal("Şifre başarıyla değişti."), false);
+                                            return 1;
+                                        }))
+                        ))));
     }
 
     private void registerPlayerLock() {

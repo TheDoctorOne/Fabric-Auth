@@ -15,8 +15,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.List;
+
 @Mixin(ClientConnection.class)
 public class ClientConnectionMixin {
+
+    @Unique
+    private static final List<String> ALLOWED = List.of("ftbquests:request_team_data");
 
     @Shadow
     @Final
@@ -24,20 +29,23 @@ public class ClientConnectionMixin {
 
     @Inject(at = @At("HEAD"), method = "handlePacket", cancellable = true)
     private static <T extends PacketListener> void handlePacket(Packet<T> packet, PacketListener listener, CallbackInfo ci) {
-        if (!(listener instanceof ServerPlayNetworkHandler)) {
+        if (!(listener instanceof ServerPlayNetworkHandler handler)) {
             return;
         }
-        ServerPlayNetworkHandler handler = (ServerPlayNetworkHandler) listener;
+        if (!(packet instanceof CustomPayloadC2SPacket pack)) {
+            return;
+        }
 
-        if (packet instanceof CustomPayloadC2SPacket pack) {
-            if (!"minecraft".equals(pack.getChannel().getNamespace())) {
-                checkLock(handler.getPlayer().getUuidAsString(), ci);
-                if (ci.isCancelled()) {
-                    LOGGER.info("Denied packet: " + pack.getChannel() + " for Player: " + handler.getPlayer().getUuidAsString());
-                }
-            } else {
-                LOGGER.debug("Packet: " + pack.getChannel() + " for Player: " + handler.getPlayer().getUuidAsString());
-            }
+        if (ALLOWED.contains(pack.getChannel().toString())) {
+            return;
+        }
+        LOGGER.debug("Packet: " + pack.getChannel() + " for Player: " + handler.getPlayer().getUuidAsString());
+        if ("minecraft".equals(pack.getChannel().getNamespace())) {
+            return;
+        }
+        checkLock(handler.getPlayer().getUuidAsString(), ci);
+        if (ci.isCancelled()) {
+            LOGGER.info("Denied packet: " + pack.getChannel() + " for Player: " + handler.getPlayer().getUuidAsString() + " IP: " + handler.getConnectionAddress().toString());
         }
     }
 
