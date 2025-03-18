@@ -29,6 +29,8 @@ public class FabricAuth implements ModInitializer {
     // That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger("fabricauth");
 
+    public static Language language = Language.EN;
+
     public IAuthHandler authHandler = new JsonAuthHandler();
 
     private void lockPlayerInputs(ServerPlayerEntity player, Vec3d playerLockedLocation) {
@@ -72,29 +74,29 @@ public class FabricAuth implements ModInitializer {
                                 .then(argument("repeatPassword", StringArgumentType.word())
                                         .executes(context -> {
                                             if(Objects.isNull(context.getSource().getPlayer())) {
-                                                context.getSource().sendFeedback(() -> Text.literal("Bu komutu sadece oyuncular kullanabilir."), false);
+                                                context.getSource().sendFeedback(() -> Text.literal(language.onlyUsedByPlayers), false);
                                                 return 1;
                                             }
                                             String pass = StringArgumentType.getString(context, "password");
                                             String pass2 = StringArgumentType.getString(context, "repeatPassword");
                                             if (!Objects.equals(pass, pass2) || StringUtil.isNullOrEmpty(pass)) {
-                                                context.getSource().sendFeedback(() -> Text.literal("Şifreler uyuşmuyor."), false);
+                                                context.getSource().sendFeedback(() -> Text.literal(language.passwordMismatch), false);
                                                 return 1;
                                             }
 
                                             String user = context.getSource().getPlayer().getUuidAsString();
 
                                             if (authHandler.userExists(user)) {
-                                                context.getSource().sendFeedback(() -> Text.literal("Zaten kayıt olmuşsunuz."), false);
+                                                context.getSource().sendFeedback(() -> Text.literal(language.alreadyRegistered), false);
                                                 return 1;
                                             }
 
                                             boolean isSuccess = authHandler.registerUpdate(user, pass, false);
                                             if (!isSuccess) {
-                                                context.getSource().sendFeedback(() -> Text.literal("Kayıt sırasında hata oluştu."), false);
+                                                context.getSource().sendFeedback(() -> Text.literal(language.registerError), false);
                                                 return 1;
                                             }
-                                            context.getSource().sendFeedback(() -> Text.literal("Kayıt başarılı! Giriş yapınız."), false);
+                                            context.getSource().sendFeedback(() -> Text.literal(language.registerSuccess), false);
                                             return 1;
                                         }))
                         )));
@@ -105,7 +107,7 @@ public class FabricAuth implements ModInitializer {
                         .then(argument("password", StringArgumentType.word())
                         .executes(context -> {
                             if(Objects.isNull(context.getSource().getPlayer())) {
-                                context.getSource().sendFeedback(() -> Text.literal("Bu komutu sadece oyuncular kullanabilir."), false);
+                                context.getSource().sendFeedback(() -> Text.literal(language.onlyUsedByPlayers), false);
                                 return 1;
                             }
 
@@ -114,13 +116,13 @@ public class FabricAuth implements ModInitializer {
                             String pass = StringArgumentType.getString(context, "password");
 
                             if (!authHandler.userExists(user)) {
-                                context.getSource().sendFeedback(() -> Text.literal("Önce kayıt olunuz."), false);
+                                context.getSource().sendFeedback(() -> Text.literal(language.registerFirst), false);
                                 return 1;
                             }
 
                             boolean isSuccess = authHandler.login(user, pass);
                             if (!isSuccess) {
-                                context.getSource().sendFeedback(() -> Text.literal("Giriş sırasında hata oluştu, şifreyi kontrol ediniz."), false);
+                                context.getSource().sendFeedback(() -> Text.literal(language.loginErrorCheckPassword), false);
                                 return 1;
                             }
 
@@ -129,7 +131,7 @@ public class FabricAuth implements ModInitializer {
                             player.sendAbilitiesUpdate();
                             player.onSpawn(); // Do chores.
 
-                            context.getSource().sendFeedback(() -> Text.literal("Giriş başarılı!"), false);
+                            context.getSource().sendFeedback(() -> Text.literal(language.loginSuccess), false);
                             return 1;
                         }))));
 
@@ -140,18 +142,18 @@ public class FabricAuth implements ModInitializer {
                                 .then(argument("newPasswordRepeat", StringArgumentType.word())
                                         .executes(context -> {
                                             if(Objects.isNull(context.getSource().getPlayer())) {
-                                                context.getSource().sendFeedback(() -> Text.literal("Bu komutu sadece oyuncular kullanabilir."), false);
+                                                context.getSource().sendFeedback(() -> Text.literal(language.onlyUsedByPlayers), false);
                                                 return 1;
                                             }
                                             if(checkPlayerLock(context.getSource().getPlayer()) == ActionResult.FAIL) {
-                                                context.getSource().sendFeedback(() -> Text.literal("Giriş yapınız."), false);
+                                                context.getSource().sendFeedback(() -> Text.literal(language.pleaseLogin), false);
                                                 return 1;
                                             }
                                             String oldPassword = StringArgumentType.getString(context, "oldPassword");
                                             String newPassword = StringArgumentType.getString(context, "newPassword");
                                             String newPasswordRepeat = StringArgumentType.getString(context, "newPasswordRepeat");
                                             if (!Objects.equals(newPassword, newPasswordRepeat) || StringUtil.isNullOrEmpty(newPassword) || StringUtil.isNullOrEmpty(newPasswordRepeat)) {
-                                                context.getSource().sendFeedback(() -> Text.literal("Şifreler uyuşmuyor."), false);
+                                                context.getSource().sendFeedback(() -> Text.literal(language.passwordMismatch), false);
                                                 return 1;
                                             }
 
@@ -160,10 +162,10 @@ public class FabricAuth implements ModInitializer {
 
                                             boolean isSuccess = authHandler.changePassword(user, oldPassword, newPassword);
                                             if (!isSuccess) {
-                                                context.getSource().sendFeedback(() -> Text.literal("Şifre değişimi sırasında hata oluştu. Eski şifreni doğru girdin mi?"), false);
+                                                context.getSource().sendFeedback(() -> Text.literal(language.passwordChangeError), false);
                                                 return 1;
                                             }
-                                            context.getSource().sendFeedback(() -> Text.literal("Şifre başarıyla değişti."), false);
+                                            context.getSource().sendFeedback(() -> Text.literal(language.passwordChangeSuccess), false);
                                             return 1;
                                         }))
                         ))));
@@ -205,7 +207,7 @@ public class FabricAuth implements ModInitializer {
     }
 
     private static void sendLoginMessage(PlayerEntity player) {
-        player.sendMessage(Text.literal("Giriş yapınız!"), true); // Inform the player
+        player.sendMessage(Text.literal(language.pleaseLogin), true); // Inform the player
     }
 
 }

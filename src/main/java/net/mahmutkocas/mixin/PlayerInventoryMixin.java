@@ -1,5 +1,6 @@
 package net.mahmutkocas.mixin;
 
+import net.mahmutkocas.FabricAuth;
 import net.mahmutkocas.PlayerStateHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -43,7 +44,7 @@ public class PlayerInventoryMixin {
 
     @Unique
     private static void sendLoginMessage(PlayerEntity player) {
-        player.sendMessage(Text.literal("Giriş yapınız!"), true); // Inform the player
+        player.sendMessage(Text.literal(FabricAuth.language.pleaseLogin), true); // Inform the player
     }
 
 }
